@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -33,6 +33,12 @@ interface MainContentProps {
 export function MainContent({ user, project }: MainContentProps) {
   const [activeView, setActiveView] = useState<"preview" | "code">("preview");
 
+  const handleTabChange = useCallback((value: string) => {
+    if (value === "preview" || value === "code") {
+      setActiveView(value);
+    }
+  }, []);
+
   return (
     <FileSystemProvider initialData={project?.data}>
       <ChatProvider projectId={project?.id} initialMessages={project?.messages}>
@@ -61,10 +67,9 @@ export function MainContent({ user, project }: MainContentProps) {
                 {/* Top Bar */}
                 <div className="h-14 border-b border-neutral-200/60 px-6 flex items-center justify-between bg-neutral-50/50">
                   <Tabs
+                    key="main-tabs"
                     value={activeView}
-                    onValueChange={(v) =>
-                      setActiveView(v as "preview" | "code")
-                    }
+                    onValueChange={handleTabChange}
                   >
                     <TabsList className="bg-white/60 border border-neutral-200/60 p-0.5 h-9 shadow-sm">
                       <TabsTrigger value="preview" className="data-[state=active]:bg-white data-[state=active]:text-neutral-900 data-[state=active]:shadow-sm text-neutral-600 px-4 py-1.5 text-sm font-medium transition-all">Preview</TabsTrigger>
